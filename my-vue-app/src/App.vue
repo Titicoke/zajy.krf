@@ -1,10 +1,18 @@
 <script setup>
+
 </script>
 
 <template>
-  <div>1234</div>
+  <router-view />
+
 </template>
 
-<style scoped>
 
+<style>
+#app{
+  width:100%;
+  height:100%; 
+  overflow:hidden;
+}
 </style>
+
