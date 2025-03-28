@@ -135,24 +135,6 @@ const onSubmit = () => {
 
 const {proxy}=getCurrentInstance()
 
-const getUserData=async(config)=>{
-  let data=await proxy.$api.getUserData(config)
-  console.log(data)
-  tableData.value=data.list.map(item=>({
-    ...item,
-    sexLabel : item.sex === 1 ?'男':'女'
-  }))
- 
-  if (config) {
-    config.total = data.count; // 确保 config 存在
-    console.log(config.total)
-    console.log(config)
-  }else{
-    console.log("config不存在")
-    console.log(config)
-  }
-}
-
 const config = reactive({
   name:'',
   total:0,
@@ -183,6 +165,24 @@ const tableLabel=reactive([
     width:400
   }
 ])
+
+const getUserData=async(config)=>{
+  let data=await proxy.$api.getUserData(config)
+  console.log(data)
+  tableData.value=data.list.map(item=>({
+    ...item,
+    sexLabel : item.sex === 1 ?'男':'女'
+  }))
+ 
+  if (config) {
+    config.total = data.count; // 确保 config 存在
+    console.log(config.total)
+    console.log(config)
+  }else{
+    console.log("config不存在")
+    console.log(config)
+  }
+}
 
 const handleChange = (page)=>{
   config.page=page

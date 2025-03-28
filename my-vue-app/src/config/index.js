@@ -17,5 +17,5 @@ const EnvConfig = {
 export default{
     env,
     ...EnvConfig[env],
-    mock:true,
+    mock:true, //ture使用mockApi false使用baseApi
 }

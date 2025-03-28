@@ -3,8 +3,6 @@ import { ElMessage } from "element-plus";
 import config from "@/config"
 
 const service = axios.create();
-//const NETWORK_ERROR = "网络错误……";
-
 //添加请求拦截器
 service.interceptors.request.use(
     function(config){
@@ -15,16 +13,13 @@ service.interceptors.request.use(
     }
 );
 
-//添加相应拦截器
+//添加响应拦截器
 service.interceptors.response.use((res)=>{
     const {code,data,msg}=res.data;
     if(code===200){
-        //console.log("正常返回");        
-        //console.log(data)
         return data;
     }else{
-        console.log("异常");   
-        const NETWORK_ERROR = "网络错误…";
+        const NETWORK_ERROR = "访问接口未获得数据，网络错误…";
         ElMessage.error(msg || NETWORK_ERROR);
         return Promise.reject(msg || NETWORK_ERROR)
     }

@@ -12,5 +12,5 @@ Mock.mock(/home\/getUserData/,"get",userApi.getUserList);
 Mock.mock(/user\/deleteUser/, "get", userApi.deleteUser);
 Mock.mock(/user\/addUser/,"post", userApi.createUser);
 Mock.mock(/user\/editUser/, "post",userApi.updateUser)
-//Mock.mock(/permission\/getMenu/, "post",permissionApi.getMenu)
+Mock.mock(/permission\/getMenu/, "post",permissionApi.getMenu)
 //Mock.mock("/api/home/getTableData","get",homeApi.getTableData);
