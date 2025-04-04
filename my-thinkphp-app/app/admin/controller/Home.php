@@ -1,12 +1,12 @@
 <?php
 
-namespace app\controller;
+namespace app\admin\controller;
 
 use app\BaseController;
 
-class Index extends BaseController
+class Home extends BaseController
 {
-    public function index()
+    public function getTableData()
     {
         return 'index控制器下的index方法';
     }

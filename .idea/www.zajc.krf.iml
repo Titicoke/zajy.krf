@@ -23,6 +23,7 @@
       <excludeFolder url="file://$MODULE_DIR$/my-thinkphp-app/vendor/topthink/think-orm" />
       <excludeFolder url="file://$MODULE_DIR$/my-thinkphp-app/vendor/topthink/think-trace" />
       <excludeFolder url="file://$MODULE_DIR$/my-thinkphp-app/vendor/topthink/think-validate" />
+      <excludeFolder url="file://$MODULE_DIR$/my-thinkphp-app/vendor/topthink/think-multi-app" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -10,6 +10,17 @@ return [
 
     // 缓存连接方式配置
     'stores'  => [
+        'redis' => [
+            'type'       => 'redis',
+            'host'       => '127.0.0.1',
+            'port'       => 6379,
+            'password'   => '',
+            'select'     => 0,
+            'timeout'    => 0,
+            'expire'     => 0,
+            'persistent' => false,
+            'prefix'     => 'hosp_token_',
+        ],
         'file' => [
             // 驱动方式
             'type'       => 'File',

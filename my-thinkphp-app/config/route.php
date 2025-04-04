@@ -29,11 +29,11 @@ return [
     // 是否使用控制器后缀
     'controller_suffix'     => false,
     // 默认模块名（开启自动多模块有效）
-    'default_module'        => 'index',
+    'default_module'        => 'vol',
     // 默认控制器名
     'default_controller'    => 'Index',
     // 默认操作名
-    'default_action'        => 'index',
+    'default_action'        => 'vol',
     // 操作方法后缀
     'action_suffix'         => '',
     // 非路由变量是否使用普通参数方式（用于URL生成）
