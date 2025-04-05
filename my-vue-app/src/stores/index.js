@@ -123,7 +123,7 @@ export const useAllDataStore = defineStore ("allData",() => {
             state.value.routeList.push(router.addRoute("main",item))  
         })  
         
-        //console.log(router.getRoutes())    
+        console.log(router.getRoutes())    
     
     }
 

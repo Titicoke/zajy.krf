@@ -8,7 +8,7 @@ export default defineConfig({
       '/api': {
         target: 'http://www.zajy.krf', 
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/api/,  '/admin')
+        rewrite: path => path.replace(/^\/api/,  '')
       }
     }
   },

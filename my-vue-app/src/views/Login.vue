@@ -10,6 +10,9 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="login"> 登录 </el-button>
+                <el-button type="text" @click="reg" style="color: #409eff; text-decoration: underline">
+                注册账号 
+                </el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -29,7 +32,7 @@ const loginForm = reactive({
 });
 
 const login=async ()=>{
-    const res = await proxy.$api.getMenu(loginForm);
+    const res = await proxy.$api.login(loginForm);
     if(res){
 
         // 新增本地存储（需同步更新store）
@@ -41,12 +44,13 @@ const login=async ()=>{
         store.state.token=res.token  
         store.state.userInfo=res.userInfo 
 
-        // 强制刷新路由（避免动态路由加载问题）
-        //window.location.reload();  
-
         console.log(res)
         router.push("/home")
     }
+}
+
+const reg=()=>{
+    router.push("/reg")
 }
 </script>
 <style scoped lang="less">

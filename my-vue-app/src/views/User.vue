@@ -34,9 +34,6 @@ const handleSearch = () => {
   getUserData(config)
 }
 
-const handleClick = () => {
-  console.log('click')
-}
 
 const tableData=ref([])
 

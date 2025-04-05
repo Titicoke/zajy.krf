@@ -60,9 +60,16 @@ export default {
       data: params
     })
   },
-  getMenu(params) {
+  login(params) {
     return request({
-      url: '/login/login',
+      url: '/admin/login/login',
+      method: 'post',
+      data: params
+    })
+  },
+  getdepartments(params) {
+    return request({
+      url: '/service/departments/getdepartments',
       method: 'post',
       data: params
     })
