@@ -1,6 +1,6 @@
 <?php
 namespace app\admin\controller;
-
+use app\service\TokenService;
 use think\facade\Db;
 use think\facade\Request;
 
@@ -31,14 +31,15 @@ class Login
             // 获取动态菜单
             $menuData = $this->buildMenu($user['role_id']);
 
-            // 生成访问令牌
-            $token = md5('hospital_token_' . date('YmdHis'));
+            // 生成Token
+            $token = TokenService::createToken($user['user_id'],$user['role_id']);
 
             return json([
                 'code'    => 200,
                 'data'    => [
                     'userInfo' => [
                         'userId'     => $user['user_id'],
+                        'userRoleId'     => $user['role_id'],
                         'realName'   => $user['real_name'],
                         'avatar'     => $user['avatar'] ?? '/static/avatar/default.png',
                         'department' => $user['dept_name'] ?? '未分配科室',

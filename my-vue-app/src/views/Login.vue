@@ -31,10 +31,20 @@ const loginForm = reactive({
 const login=async ()=>{
     const res = await proxy.$api.getMenu(loginForm);
     if(res){
+
+        // 新增本地存储（需同步更新store）
+        localStorage.setItem('access_token',  res.token); 
+
         store.updateMenuList(res.menuList)     
         //在这里执行添加路由方法,并传入router
         store.addMenu(router) 
-        store.state.token=res.token   
+        store.state.token=res.token  
+        store.state.userInfo=res.userInfo 
+
+        // 强制刷新路由（避免动态路由加载问题）
+        //window.location.reload();  
+
+        console.log(res)
         router.push("/home")
     }
 }

@@ -62,7 +62,7 @@ export default {
   },
   getMenu(params) {
     return request({
-      url: '/permission/getMenu',
+      url: '/login/login',
       method: 'post',
       data: params
     })

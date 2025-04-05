@@ -6,7 +6,7 @@ use app\BaseController;
 
 class Home extends BaseController
 {
-    public function getTableData()
+    public function home()
     {
         return 'index控制器下的index方法';
     }

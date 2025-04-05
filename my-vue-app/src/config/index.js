@@ -2,7 +2,7 @@ const env=import.meta.env.MODE || "prod"
 const EnvConfig = {
     development:{
     baseApi: "/api",
-    mockApi: "https://apifoxmock.com/m1/4068509-0-default/api",
+    mockApi: "http://www.zajy.krf/",
     },
     test:{
     baseApi: "//test.future.com/api",
@@ -17,5 +17,5 @@ const EnvConfig = {
 export default{
     env,
     ...EnvConfig[env],
-    mock:true, //ture使用mockApi false使用baseApi
+    mock:false,
 }

@@ -42,7 +42,7 @@ export const useAllDataStore = defineStore ("allData",() => {
         if(val.name === 'home'){
             state.value.currentMenu = null;
         }else{
-            state.value.currentMenu=val;
+            state.value.currentMenu = val;
             let index = state.value.tags.findIndex(item=>item.name === val.name)
             index === -1?state.value.tags.push(val):"";
         }
@@ -123,7 +123,7 @@ export const useAllDataStore = defineStore ("allData",() => {
             state.value.routeList.push(router.addRoute("main",item))  
         })  
         
-        console.log(router.getRoutes())    
+        //console.log(router.getRoutes())    
     
     }
 
@@ -136,6 +136,7 @@ export const useAllDataStore = defineStore ("allData",() => {
        state.value=initState()
        //删除本地缓存，因为这个clearn方法是用户退出执行的
        localStorage.removeItem('store')
+       localStorage.removeItem('access_token')
      }
 
 

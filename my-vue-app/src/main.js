@@ -1,60 +1,59 @@
-// 应用初始化阶段
-import { createApp } from 'vue'
-import App from './App.vue'
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import { createPinia } from 'pinia'
-import router from './router'
-import api from "@/api/api"
-import { useAllDataStore } from "@/stores"
-import "@/assets/less/index.less"
+//"先注册 -> 再配置 -> 最后挂载" 的生命周期顺序
+import { createApp } from 'vue';
+import App from './App.vue';
+import "@/assets/less/index.less";
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
+import * as ElementPlusIconsVue from '@element-plus/icons-vue';
+import router from './router';
+import { createPinia } from 'pinia';
+import api from "@/api/api";
+import {useAllDataStore} from "@/stores"
 
-// 路由守卫配置
-// 获取所有路由记录的完整列表，用于校验目标路由是否存在
-function isRoute(to) {
-  return router.getRoutes().filter(item => item.path === to.path).length > 0
+ //getRoutes获得所有路由记录的完整列表。
+ //这个方法判断要跳转的路由是否存在
+ function isRoute(to){
+  return router.getRoutes().filter(item=>item.path===to.path).length>0
 }
 
-// 全局前置路由守卫
 router.beforeEach((to, from) => {
-  // 非登录页面且无token时重定向到登录页
-  if (to.path !== '/login' && !store.state.token) {
-    return { name: 'login' }
-  }
-  // 路由不存在时跳转到404页面
-  if (!isRoute(to)) {
-    return { name: "404" }
-  }
+    //如果要跳转的不是login,且token不存在(可以通过不存在token判断出用户未登录)
+   if(to.path !== '/login'&&!store.state.token){
+       //跳转到login
+       return { name: 'login' }
+   }
+   //如果路由记录不存在
+   if(!isRoute(to)){
+       //跳转到404界面
+       return {name: "404"}
+   }
 })
 
-// 应用实例创建与配置
-const app = createApp(App)
-const pinia = createPinia()
+const app = createApp(App);
+const pinia = createPinia();
 
-// 全局图标组件注册（必须在挂载前完成）
+
+// 注册图标组件 (必须在挂载前完成)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-  app.component(key, component)
+  app.component(key, component);
 }
-// 插件注册顺序
-app.use(pinia)       // 状态管理库
-app.use(ElementPlus) // UI组件库
 
-// 初始化store并添加菜单
-const store = useAllDataStore()
-store.addMenu(router, "refresh")
+// 按顺序使用插件
 
-// 路由插件注册
-app.use(router)
+app.use(pinia);
+app.use(ElementPlus);
+//user pinia 之后 use router之前
+const store=useAllDataStore();
+store.addMenu(router,"refresh")
 
-// 全局属性配置
-app.config.globalProperties.$api = api
-
-// Mock数据配置（开发环境按需加载）
+app.use(router);
+// 配置全局属性
+app.config.globalProperties.$api = api;
+//按需加载 mock
 // if (import.meta.env.DEV) {
-//  import("@/api/mock.js")
+//  import("@/api/mock.js");
 // }
-import("@/api/mock.js")
+import("@/api/mock.js");
 
-// 应用挂载阶段（必须最后执行）
-app.mount('#app')
+// 最后挂载
+app.mount('#app');

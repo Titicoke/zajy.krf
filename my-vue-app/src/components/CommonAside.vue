@@ -6,104 +6,82 @@
         :collapse-transition="false"
         :default-active="activeMenu"
         >
-            <h3 v-show="!isCollapse">通用后台管理</h3>
+            <h3 v-show="!isCollapse">志爱晋医</h3>
             <h3 v-show="isCollapse">后台</h3>
-            <el-menu-item
+            
+            <!-- 无子菜单项 -->
+            <el-menu-item 
              v-for="item in noChildren"
-              :index="item.path"
-               :key="item.path"
+              :index="item.path" 
+               :key="item.path" 
                @click="handleMenu(item)"
             >
-                <component class="icons" :is="item.icon"></component>
-                <span>{{item.label}}</span>
+                <component class="icons" :is="item.icon"></component> 
+                <span>{{item.label}}</span> 
             </el-menu-item>
-            <el-sub-menu v-for="item in hasChildren" :index="item.path" :key="item.path">
+            
+            <!-- 有子菜单项 -->
+            <el-sub-menu 
+              v-for="item in hasChildren" 
+              :index="item.path"  
+              :key="item.path" 
+            >
                 <template #title>
-                    <component class="icons" :is="item.icon"></component>
-                    <span>{{item.label}}</span>
+                    <component class="icons" :is="item.icon"></component> 
+                    <span>{{item.label}}</span> 
                 </template>
                 <el-menu-item-group>
-                    <!-- 这里数据源应该是 item.children -->
-                    <el-menu-item
-                     v-for="(subItem) in item.children"
-                        :index="subItem.path"
-                        :key="subItem.path"
+                    <el-menu-item 
+                     v-for="(subItem) in item.children" 
+                        :index="subItem.path" 
+                        :key="subItem.path" 
                         @click="handleMenu(subItem)"
                     >
-                        <span>{{subItem.label}}</span>
+                        <span>{{subItem.label}}</span> 
                     </el-menu-item>
                 </el-menu-item-group>
             </el-sub-menu>
         </el-menu>
     </el-aside>
 </template>
-
+ 
 <script setup>
 import { ref, computed } from 'vue'
-import { useAllDataStore } from '@/stores/index.js'
-import { useRoute,useRouter } from 'vue-router'
-
-// const list = ref([
-//     {
-//         path: '/home',
-//         name: 'home',
-//         label: '首页',
-//         icon: 'house',
-//         url: 'Home'
-//     },
-//     {
-//         path: '/mall',
-//         name:'mall',
-//         label: '商品管理',
-//         icon: 'video-play',
-//         url: 'Mall'
-//     },
-//     {
-//         path: '/user',
-//         name: 'user',
-//         label: '用户管理',
-//         icon: 'user',
-//         url: 'User'
-//     },
-//     {
-//         path: 'other',
-//         label: '其他',
-//         icon: 'location',
-//         children: [
-//             {
-//                 path: '/page1',
-//                 name: 'page1',
-//                 label: '页面1',
-//                 icon:'setting',
-//                 url: 'Page1'
-//             },
-//             {
-//                 path: '/page2',
-//                 name: 'page2',
-//                 label: '页面2',
-//                 icon:'setting',
-//                 url: 'Page2'
-//             }
-//         ]
-//     }
-// ])
-
-
-
-const store=useAllDataStore() 
-//sconsole.log(store)
-const isCollapse = computed(() => store.state.isCollapse) 
-const list = computed(()=>store.state.menuList)
-const noChildren = computed(() => list.value.filter(item =>!item.children))
-const hasChildren = computed(() => list.value.filter(item => item.children))
-const width=computed(()=>store.state.isCollapse?'64px':'180px')
-
+import { useAllDataStore } from '@/stores/index.js' 
+import { useRoute, useRouter } from 'vue-router'
+ 
+const store = useAllDataStore()
 const router = useRouter()
 const route = useRoute()
-const activeMenu=computed(()=>route.path)
-const handleMenu = (item)=>{
-    router.push(item.path)
-    store.selectMenu(item)
+ 
+// 核心修改部分：添加排序逻辑 
+const sortedMenuList = computed(() => {
+  // 深拷贝后排序 
+  const sorted = [...store.state.menuList].sort((a,  b) => a.sort  - b.sort) 
+  // 子菜单排序 
+  return sorted.map(item  => ({
+    ...item,
+    children: item.children  ? [...item.children].sort((a,  b) => a.sort  - b.sort)  : []
+  }))
+})
+ 
+// 计算属性使用排序后的数据 
+const noChildren = computed(() => 
+  sortedMenuList.value.filter(item  => !item.children  || item.children.length  === 0)
+)
+ 
+const hasChildren = computed(() => 
+  sortedMenuList.value.filter(item  => item.children  && item.children.length  > 0)
+)
+ 
+// 其他原有计算属性 
+const isCollapse = computed(() => store.state.isCollapse) 
+const width = computed(() => store.state.isCollapse  ? '64px' : '180px')
+const activeMenu = computed(() => route.path) 
+ 
+const handleMenu = (item) => {
+  router.push(item.path) 
+  store.selectMenu(item) 
 }
 </script>
 <style lang="less" scoped>
