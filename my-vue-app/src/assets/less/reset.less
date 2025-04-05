@@ -174,6 +174,23 @@ body {
   }
 }
 
+/* 在全局样式文件添加 */
+.el-message {
+  top: 40% !important;
+  transform: translateY(-50%) scale(1.5); /* 放大1.5倍 */
+  padding: 24px 36px !important;
+  font-size: 20px !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2) !important;
+  backdrop-filter: blur(5px); /* 背景模糊效果 */
+  border: 2px solid currentColor; /* 动态匹配颜色边框 */
+}
+ 
+.el-message__icon { 
+  font-size: 28px !important; /* 图标放大 */
+  margin-right: 16px !important;
+}
+
 //我自己加的滚动条样式
 ::-webkit-scrollbar {
   width: 6px; // 垂直滚动条宽度

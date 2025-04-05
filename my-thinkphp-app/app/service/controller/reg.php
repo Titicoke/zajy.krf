@@ -3,7 +3,7 @@
 namespace app\service\controller;
 use think\facade\Db;
 
-class Departments
+class reg
 {
     public function getDepartments()
     {
@@ -19,13 +19,15 @@ class Departments
             // 执行查询并处理结果
             $list = $query->select()->toArray();
 
-            return json([
-                'code' => 200,
-                'msg' => 'success',
-                'data' => $list
-            ]);
+//            return json([
+//                'code' => 200,
+//                'msg' => 'success',
+//                'data' => $list
+//            ]);
+            return show(config("status.success"),'获取单位列表成功',$list);
 
         } catch (\Throwable $e) {
+
             return json([
                 'code' => 500,
                 'msg' => '数据服务暂不可用',

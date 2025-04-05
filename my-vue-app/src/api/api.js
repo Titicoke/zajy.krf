@@ -69,7 +69,7 @@ export default {
   },
   getdepartments(params) {
     return request({
-      url: '/service/departments/getdepartments',
+      url: '/service/reg/getdepartments',
       method: 'post',
       data: params
     })

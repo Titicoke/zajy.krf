@@ -42,6 +42,8 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 app.use(pinia);
 app.use(ElementPlus);
+
+
 //user pinia 之后 use router之前
 const store=useAllDataStore();
 store.addMenu(router,"refresh")
