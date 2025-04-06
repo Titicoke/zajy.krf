@@ -7,7 +7,7 @@
             <el-image 
               :src="getImageUrl('zyz')"
               fit="contain"
-              style="height:48px">
+              style="height:55px">
             </el-image>
           </el-col>
           <el-col :span="20">
@@ -107,7 +107,7 @@
         <el-form-item label="岗位名称" prop="post" :data-prop="'post'" class="required-star">
           <el-input 
             v-model="form.post" 
-            placeholder="格式：科室 - 职称"
+            placeholder="格式：科室 - 岗位名称"
             clearable>
             <template #prefix>
               <el-icon><Briefcase /></el-icon>
@@ -314,6 +314,15 @@ const sendSmsCode = async () => {
     //   phone: form.phone, 
     //   scene: 'register'
     // })
+
+    try {
+
+      const res = await proxy.$api.getSmsCode({phone_number: form.phone}) 
+      } catch (e) {
+        ElMessage.error('发送验证码失败')
+        return
+    }
+
  
     smsCountdown.value  = 10 
     const timer = setInterval(() => {
@@ -357,6 +366,7 @@ const partyBranches = ref([])
 onMounted(async () => {
   try {
     // 加载科室数据（需替换实际API）
+    console.log('dddd')
     const res = await proxy.$api.getdepartments() 
     departments.value  = res
   } catch (e) {

@@ -81,4 +81,11 @@ export default {
       data: params
     })
   },
+  getSmsCode(params) {
+    return request({
+      url: '/service/smscode',
+      method: 'post',
+      data: params
+    })
+  },
 }
