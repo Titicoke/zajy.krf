@@ -88,4 +88,11 @@ export default {
       data: params
     })
   },
+  checkUsername(params) {
+    return request({
+      url: '/service/checkUsername',
+      method: 'post',
+      data: params
+    })
+  },
 }

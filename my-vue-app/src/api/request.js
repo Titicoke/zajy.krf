@@ -24,8 +24,8 @@ service.interceptors.request.use(
 service.interceptors.response.use((res)=>{
     const {code,data,msg}=res.data;
     if(code===200){
-        //console.log("正常返回");        
-        //console.log(data)
+        console.log("正常返回");        
+        console.log(data)
         return data;
     }else{
         console.log("异常");   

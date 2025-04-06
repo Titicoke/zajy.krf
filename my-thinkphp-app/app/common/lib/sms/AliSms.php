@@ -19,7 +19,13 @@ class AliSms implements SmsBase
      */
     public static function sendCode(string $phone, int $code):bool
     {
+
+
+
         return true; //实际应用环境下把这行代码注释掉
+
+
+
         $config = new \Darabonba\OpenApi\Models\Config([
             'accessKeyId' => config('aliyun.access_key_id'),
             'accessKeySecret' => config('aliyun.access_key_secret'),

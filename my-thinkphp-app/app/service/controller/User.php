@@ -1,10 +1,28 @@
 <?php
 
 namespace app\service\controller;
+use app\BaseController;
 use think\facade\Db;
 
-class user
+class User extends BaseController
 {
+// 控制器中直接使用Db门面+缓存
+    public function checkUsername()
+    {
+        $username = input('username');
+        if (empty($username) || strlen($username) < 6) {
+            return json(['code' => 400, 'msg' => '用户名长度至少6位']);
+        }
+
+        // 带缓存的查询
+        $exists = Db::name('users')
+            ->where('username', $username)
+            //->cache(60, 'username_check') // 自定义缓存标识
+            ->count();
+
+        $data = $exists ? 1 : 0;
+        return show(config("status.success"),'正常返回用户名测试结果',$data);
+    }
     public function getDepartments()
     {
         try {

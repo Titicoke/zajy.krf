@@ -7,7 +7,7 @@
             <el-image 
               :src="getImageUrl('zyz')"
               fit="contain"
-              style="height:48px">
+              style="height:55px">
             </el-image>
           </el-col>
           <el-col :span="20">
@@ -107,7 +107,7 @@
         <el-form-item label="岗位名称" prop="post" :data-prop="'post'" class="required-star">
           <el-input 
             v-model="form.post" 
-            placeholder="格式：科室 - 职称"
+            placeholder="格式：科室 - 岗位名称"
             clearable>
             <template #prefix>
               <el-icon><Briefcase /></el-icon>
@@ -185,6 +185,11 @@
         <el-form-item>
           <el-button type="primary" @click="submitForm">立即注册</el-button>
         </el-form-item>
+        <el-form-item>
+          <el-button type="text" @click="goLogin" style="color: #409eff; text-decoration: underline;text-align:right;padding-left: 200px;">
+                已有账户，前去登录 
+          </el-button>
+        </el-form-item>
     </el-form>
     </div>
   </div>
@@ -194,6 +199,12 @@
 import { ref, reactive, onMounted, computed,getCurrentInstance,nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import { User, Lock, Document, Briefcase, Message, EditPen } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+const router=useRouter()
+
+const goLogin=()=>{
+    router.push("/login")
+}
 
 const {proxy}=getCurrentInstance()
 
@@ -303,6 +314,15 @@ const sendSmsCode = async () => {
     //   phone: form.phone, 
     //   scene: 'register'
     // })
+
+    try {
+      let data={phone_number: form.phone}
+      const res = await proxy.$api.getSmsCode(data) 
+      } catch (e) {
+        ElMessage.error('发送验证码失败')
+        return
+    }
+
  
     smsCountdown.value  = 10 
     const timer = setInterval(() => {
@@ -346,6 +366,7 @@ const partyBranches = ref([])
 onMounted(async () => {
   try {
     // 加载科室数据（需替换实际API）
+    console.log('dddd')
     const res = await proxy.$api.getdepartments() 
     departments.value  = res
   } catch (e) {
@@ -437,11 +458,14 @@ const focusErrorInput = (propName) => {
 const checkUsernameExists = async () => {
   if (!form.username)  return 
   try {
-    // const { data } = await axios.get(`/api/check-username?name=${form.username}`) 
-    // if (data.exists)  ElMessage.warning(' 用户名已存在')
-  } catch (e) {
-    console.error(e) 
+      let data={username: form.username}
+      const res = await proxy.$api.checkUsername(data) 
+      if (res)  ElMessage.warning(' 用户名已存在')
+      } catch (e) {
+        ElMessage.error('用户名验证失败')
+        return
   }
+
 }
 
 </script>
@@ -669,4 +693,6 @@ const checkUsernameExists = async () => {
 :deep(.sms-btn[disabled]) {
   color: var(--el-disabled-text-color) !important;
 }
+
+
 </style>

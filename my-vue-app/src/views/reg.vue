@@ -456,13 +456,38 @@ const focusErrorInput = (propName) => {
 }
 // 其他方法 
 const checkUsernameExists = async () => {
-  if (!form.username)  return 
+  // 输入验证（双重保障）
+  if (!form.username?.trim()  || form.username.length  < 6) {
+      ElMessage.warning(' 用户名需≥6位字符');
+      return;
+    }
+
   try {
-    // const { data } = await axios.get(`/api/check-username?name=${form.username}`) 
-    // if (data.exists)  ElMessage.warning(' 用户名已存在')
-  } catch (e) {
-    console.error(e) 
+      let data={username: form.username}
+      let res = await proxy.$api.checkUsername(data) 
+
+      if (res === 1) {
+        ElMessage({ 
+        type: 'error',
+        message: '✖ 用户名不可用',
+        duration: 2000,  // 确保自动关闭 
+        showClose: true, // 强制显示关闭按钮 
+        customClass: 'username-alert',
+        onClose: () => {
+          //focusErrorInput(firstErrorField)
+        }
+      })
+      } else {
+        ElMessage.success('✓  用户名可用')
+      }
+      
+
+    } catch (e) {
+        console.log(e.message)
+        ElMessage.error('用户名验证失败')
+        return
   }
+
 }
 
 </script>
