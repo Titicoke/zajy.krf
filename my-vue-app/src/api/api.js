@@ -69,7 +69,14 @@ export default {
   },
   getdepartments(params) {
     return request({
-      url: '/service/reg/getdepartments',
+      url: '/service/user/getdepartments',
+      method: 'post',
+      data: params
+    })
+  },
+  getdepartments(params) {
+    return request({
+      url: '/service/user/getpartyBranches',
       method: 'post',
       data: params
     })

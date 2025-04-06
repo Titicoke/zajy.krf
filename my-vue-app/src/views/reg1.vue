@@ -348,8 +348,9 @@ const handlePartyChange = (isMember) => {
 const loadPartyBranches = async () => {
   try {
     if (partyBranches.value.length  > 0) return 
-    const res = await proxy.$api.getpartyBranches() 
-    partyBranches.value  = res
+    // 加载党支部数据（需替换实际API）
+    const { data } = await axios.get('/api/party-branches') 
+    partyBranches.value  = data 
   } catch (e) {
     ElMessage.error(' 支部加载失败')
   }
