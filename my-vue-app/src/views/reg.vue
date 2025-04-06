@@ -158,6 +158,7 @@
         <el-form-item label="手机号" prop="phone" :data-prop="'phone'" class="required-star">
           <el-input 
             v-model="form.phone" 
+            @input="validatePhone"
             placeholder="11位有效号码"
             clearable>
             <template #append>
@@ -184,6 +185,11 @@
         <el-form-item>
           <el-button type="primary" @click="submitForm">立即注册</el-button>
         </el-form-item>
+        <el-form-item>
+          <el-button type="text" @click="goLogin" style="color: #409eff; text-decoration: underline;text-align:right;padding-left: 200px;">
+                已有账户，前去登录 
+          </el-button>
+        </el-form-item>
     </el-form>
     </div>
   </div>
@@ -193,6 +199,12 @@
 import { ref, reactive, onMounted, computed,getCurrentInstance,nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import { User, Lock, Document, Briefcase, Message, EditPen } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+const router=useRouter()
+
+const goLogin=()=>{
+    router.push("/login")
+}
 
 const {proxy}=getCurrentInstance()
 
@@ -266,7 +278,7 @@ const rules = reactive({
   ],
   phone: [
     { required: true, message: '必填项', trigger: 'blur' },
-    { pattern: /^1[3-9]\d{9}$/, message: '手机号格式错误' }
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入真实的手机号' }
   ],
   smsCode: [
     { required: true, message: '必填项', trigger: 'blur' },
@@ -276,9 +288,21 @@ const rules = reactive({
  
 // 短信验证码逻辑 
 const smsCountdown = ref(0)
-const smsDisabled = ref(false)
+
 const smsBtnText = computed(() => smsCountdown.value  > 0 ? `${smsCountdown.value}s  后重发` : '获取验证码')
+ // 新增手机号有效性响应式变量 
+const isPhoneValid = ref(false)
  
+ // 优化短信按钮禁用状态计算属性 
+ const smsDisabled = computed(() => {
+   return smsCountdown.value  > 0 || !isPhoneValid.value  
+ })
+  
+ // 修改手机号输入监听 
+ const validatePhone = () => {
+   isPhoneValid.value  = /^1[3-9]\d{9}$/.test(form.phone) 
+ }
+
 const sendSmsCode = async () => {
   try {
     if (!/^1[3-9]\d{9}$/.test(form.phone))  {
@@ -286,12 +310,12 @@ const sendSmsCode = async () => {
     }
  
     // 调用短信接口（需替换实际API）
-    await axios.post('/api/send-sms',  {
-      phone: form.phone, 
-      scene: 'register'
-    })
+    // await axios.post('/api/send-sms',  {
+    //   phone: form.phone, 
+    //   scene: 'register'
+    // })
  
-    smsCountdown.value  = 60 
+    smsCountdown.value  = 10 
     const timer = setInterval(() => {
       smsCountdown.value-- 
       if (smsCountdown.value  <= 0) {
@@ -304,7 +328,7 @@ const sendSmsCode = async () => {
   } catch (e) {
     ElMessage.error(e.response?.data?.message  || '发送失败')
   } finally {
-    smsDisabled.value  = true 
+    smsDisabled.value  = true
   }
 }
  
@@ -347,11 +371,11 @@ const handlePartyChange = (isMember) => {
 
 const loadPartyBranches = async () => {
   try {
-    if (partyBranches.value.length  > 0) return 
+   if (partyBranches.value.length  > 0) return 
     const res = await proxy.$api.getpartyBranches() 
-    partyBranches.value  = res
+   partyBranches.value  = res
   } catch (e) {
-    ElMessage.error(' 支部加载失败')
+   ElMessage.error(' 支部加载失败')
   }
 }
  
@@ -647,4 +671,15 @@ const checkUsernameExists = async () => {
     padding: 30px;
   }
 }
+/* 验证码按钮可用状态样式 */
+:deep(.sms-btn:not([disabled])) {
+  color: #409EFF !important;  /* 浅蓝色 */
+}
+ 
+/* 禁用状态保持默认灰色 */
+:deep(.sms-btn[disabled]) {
+  color: var(--el-disabled-text-color) !important;
+}
+
+
 </style>

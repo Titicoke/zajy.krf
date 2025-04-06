@@ -18,7 +18,12 @@ const routes =[
     {
         path:'/reg',
         name:'reg',
-        component:()=>import('@/views/reg.vue'),        
+        component:()=>import('@/views/Reg.vue'),        
+    },
+    {
+        path:'/reg1',
+        name:'reg1',
+        component:()=>import('@/views/reg1.vue'),        
     },
     {
         path: '/404',

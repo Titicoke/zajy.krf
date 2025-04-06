@@ -74,7 +74,7 @@ export default {
       data: params
     })
   },
-  getdepartments(params) {
+  getpartyBranches(params) {
     return request({
       url: '/service/user/getpartyBranches',
       method: 'post',
