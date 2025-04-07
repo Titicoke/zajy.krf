@@ -14,7 +14,7 @@ class User extends  Validate {
     protected $rule = [
         'username' => 'require',
         'phone_number' => 'require',
-        'code'  =>  'require|number|min:4',
+        'code'  =>  'require|number|min:6',
         //'type' => 'require|in:1,2',
         'type' => ["require", "in"=>"1,2"], // 两种不同的方式而已
         'sex' => ["require", "in"=>"0,1,2"],
@@ -35,6 +35,9 @@ class User extends  Validate {
     protected $scene = [
         'send_code' => ['phone_number'],
         'login' => ['phone_number', 'code', 'type'],
+        'checkCode' => ['phone_number', 'code'],
         'update_user' => ['username', 'sex'],
     ];
+
+
 }

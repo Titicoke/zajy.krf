@@ -104,7 +104,7 @@ export const useAllDataStore = defineStore ("allData",() => {
         let routers=router.getRoutes()
 
         routers.forEach((item)=>{
-            if(item.name == "main" || item.name == "login" || item.name == "404"){
+            if(item.name == "main" || item.name == "login" || item.name == "404" || item.name == "reg"){
                 console.log("未删除"+item.name)
                 return
             }else{

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import config from "@/config"
+import { da } from "element-plus/es/locales.mjs";
 
 const service = axios.create();
 //const NETWORK_ERROR = "网络错误……";
@@ -26,7 +27,8 @@ service.interceptors.response.use((res)=>{
     if(code===200){
         console.log("正常返回");        
         console.log(data)
-        return data;
+        let meRes=[data,msg];
+        return meRes;
     }else{
         console.log("异常");   
         const NETWORK_ERROR = "网络错误…";

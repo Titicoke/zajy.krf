@@ -21,15 +21,29 @@
 
 import {reactive,getCurrentInstance} from 'vue'
 import { useAllDataStore } from '@/stores/index.js'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const { proxy } = getCurrentInstance()
 const store=useAllDataStore()
 const router=useRouter()
+const route = useRoute()
 const loginForm = reactive({
-  username: 'admin',
-  password: 'admin',
+  username: '',
+  password: ''
 });
+
+// 在组件挂载时，检查查询参数并填充表单
+const initForm = () => {
+  const { username, password } = route.query
+  if (username) {
+    loginForm.username = username
+  }
+  if (password) {
+    loginForm.password = password
+  }
+}
+
+initForm()
 
 const login=async ()=>{
     const res = await proxy.$api.login(loginForm);
@@ -38,13 +52,13 @@ const login=async ()=>{
         // 新增本地存储（需同步更新store）
         localStorage.setItem('access_token',  res.token); 
 
-        store.updateMenuList(res.menuList)     
+        store.updateMenuList(res[0].menuList)     
         //在这里执行添加路由方法,并传入router
         store.addMenu(router) 
-        store.state.token=res.token  
-        store.state.userInfo=res.userInfo 
+        store.state.token=res[0].token  
+        store.state.userInfo=res[0].userInfo 
 
-        console.log(res)
+        console.log(res[0])
         router.push("/home")
     }
 }

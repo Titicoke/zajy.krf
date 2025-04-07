@@ -95,4 +95,32 @@ export default {
       data: params
     })
   },
+  checkSmsCode(params) {
+    return request({
+      url: '/service/checkSmsCode',
+      method: 'post',
+      data: params
+    })
+  },
+  saveUserReg(params) {
+    return request({
+      url: '/service/saveUserReg',
+      method: 'post',
+      data: params
+    })
+  },
+  checkIdCardExists(params) {
+    return request({
+      url: '/service/checkIdCardExists',
+      method: 'post',
+      data: params
+    })
+  },
+  checkPhoneExists(params) {
+    return request({
+      url: '/service/checkPhoneExists',
+      method: 'post',
+      data: params
+    })
+  },
 }
