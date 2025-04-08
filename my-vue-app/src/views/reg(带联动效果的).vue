@@ -106,6 +106,7 @@
             placeholder="请选择所属科室"
             filterable
             clearable
+             @change="loadPositions"
           >
             <el-option
               v-for="dept in departments"
@@ -116,17 +117,22 @@
           </el-select>
         </el-form-item>
         <!-- 岗位信息 -->
-        <el-form-item label="岗位名称" prop="post" :data-prop="'post'" class="required-star">
-          <el-input
-            v-model="form.post"
-            placeholder="请按格式输入：科室 - 岗位名称"
+        <el-form-item label="岗位类别" prop="post_id" :data-prop="'post_id'" class="required-star">
+          <el-select
+            v-model="form.post_id"
+            placeholder="请选择岗位类别"
+            filterable
             clearable
           >
-            <template #prefix>
-              <el-icon><Briefcase /></el-icon>
-            </template>
-          </el-input>
+            <el-option
+              v-for="position in positions"
+              :key="position.position_id"
+              :label="position.position_name"
+              :value="position.position_id"
+            />
+          </el-select>
         </el-form-item>
+
         <!-- 职称信息 -->
         <el-form-item label="职称" prop="title" :data-prop="'title'" class="required-star">
           <el-select
@@ -136,7 +142,7 @@
             clearable
           >
             <el-option
-              v-for="item in ['主任医师', '副主任医师', '主治医师', '住院医师']"
+              v-for="item in ['正高', '副高', '中级', '初级']"
               :key="item"
               :label="item"
               :value="item"
@@ -243,10 +249,10 @@ const form = reactive({
   password: '',
   real_name: '',
   id_card: '',
-  birthday: '无需手动改输入，根据身份证号码自动生成',
-  gender: '无需手动改输入，根据身份证号码自动生成',
+  birthday: '无需手动输入，根据身份证号码自动生成',
+  gender: '无需手动输入，根据身份证号码自动生成',
   dept_id: '',
-  post: '',
+  post_id: '',
   title: '',
   is_party_member: null,
   party_branch: '',
@@ -317,9 +323,8 @@ const rules = reactive({
   dept_id: [
     { required: true, message: '请选择所属科室', trigger: 'change' }
   ],
-  post: [
-    { required: true, message: '岗位名称是必填项，请输入', trigger: 'blur' },
-    { pattern: /^.{3,30}$/, message: '岗位名称长度应为3 - 30位字符' }
+  post_id: [
+    { required: true, message: '请选择岗位名称', trigger: 'change' }
   ],
   title: [
     { required: true, message: '请选择您的职称', trigger: 'change' }
@@ -437,6 +442,27 @@ onMounted(async () => {
   }
 });
 
+// 岗位列表
+const positions = ref([]);
+
+// 加载岗位列表
+const loadPositions = async () => {
+  const deptId = form.dept_id;
+  if (deptId) {
+    try {
+      const res = await proxy.$api.getPositions( {
+          dept_id: deptId
+        });
+      positions.value = res[0];
+    } catch (error) {
+      console.error('获取岗位列表失败:', error);
+      ElMessage.error('获取岗位列表失败，请稍后重试');
+    }
+  } else {
+    positions.value = [];
+  }
+};
+
 // 党支部加载
 const handlePartyChange = (isMember) => {
   if (!isMember) form.party_branch = '';
@@ -488,7 +514,7 @@ const submitForm = async () => {
     real_name: form.real_name,
     id_card: form.id_card,
     dept_id: form.dept_id,
-    post: form.post,
+    post_id: form.post_id,
     title: form.title,
     is_party_member: form.is_party_member,
     party_branch: form.party_branch,

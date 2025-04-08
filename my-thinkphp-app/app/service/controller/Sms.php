@@ -17,13 +17,13 @@ class Sms extends BaseController
             validate(\app\service\validate\User::class)->scene('send_code')->check($date);
 
         }catch (\think\exception\ValidateException $e){
-            return show(config('status.error'),$e->getError().$phoneNumber);
+            return show(config('code.error'),$e->getError().$phoneNumber);
         }
         //调用business
         if(SmsBus::sendCode($phoneNumber,6,"ali")){
-            return show(config("status.success"),"发送验证码成功".$phoneNumber."-".(cache(config("redis.code_pre").$phoneNumber)));
+            return show(config("code.success"),"发送验证码成功".$phoneNumber."-".(cache(config("redis.code_pre").$phoneNumber)));
         }else{
-            return show(config("status.error"),"发送验证码失败".$phoneNumber);
+            return show(config("code.error"),"发送验证码失败".$phoneNumber);
         }
     }
     public function checkSmscode()
@@ -40,7 +40,7 @@ class Sms extends BaseController
         try {
             validate(\app\service\validate\User::class)->scene('checkCode')->check($data);
         } catch (\think\exception\ValidateException $e) {
-            return show(config('status.error'), $e->getError());
+            return show(config('code.error'), $e->getError());
         }
 
         // 从缓存中获取之前存储的验证码
@@ -50,9 +50,9 @@ class Sms extends BaseController
         if ($cachedCode && $cachedCode === $code) {
             // 验证码匹配，删除缓存中的验证码
             cache(config("redis.code_pre") . $phoneNumber, null);
-            return show(config("status.success"), '验证码验证成功',1);
+            return show(config("code.success"), '验证码验证成功',[]);
         } else {
-            return show(config("status.success"), '验证码错误或已过期',0);
+            return show(config("code.error"), '验证码错误或已过期',0);
         }
     }
 

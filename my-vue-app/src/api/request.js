@@ -23,12 +23,11 @@ service.interceptors.request.use(
 
 //添加相应拦截器
 service.interceptors.response.use((res)=>{
-    const {code,data,msg}=res.data;
-    if(code===200){
+    
+    if(res.status===200){
         console.log("正常返回");        
-        console.log(data)
-        let meRes=[data,msg];
-        return meRes;
+        console.log(res.data);
+        return res;
     }else{
         console.log("异常");   
         const NETWORK_ERROR = "网络错误…";

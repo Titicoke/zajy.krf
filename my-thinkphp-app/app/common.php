@@ -6,15 +6,14 @@
  * @param $message
  * @param $data
  * @param $http_status
- * @return int|\think\response\Json
+ * @return \think\response\Json
  */
-function show($status,$message="error",$data=[])
+function show($code,$message="error",$data=[],$http_status=200)
 {
     $result=[
-        'code'=>$status,
+        'code'=>$code,
         'msg'=>$message,
         'data'=>$data,
     ];
-    return json($result);
-
+    return json($result,$http_status);
 }

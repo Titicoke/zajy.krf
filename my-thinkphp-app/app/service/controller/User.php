@@ -7,7 +7,40 @@ use think\facade\Db;
 
 class User extends BaseController
 {
+    public function getPositions()
+    {
+        //$deptId = input('dept_id');
+        $deptId = 1;
+        if (!$deptId) {
+            return json([
+                'code' => 400,
+                'msg' => '缺少必要参数 dept_id',
+                'data' => []
+            ]);
+        }
+
+        try {
+            $positions = Db::name('position_types')
+                ->where('dept_id', $deptId)
+                ->order('sort_order', 'asc')
+                ->select()
+                ->toArray();
+
+            return json([
+                'code' => 200,
+                'msg' => '获取岗位列表成功',
+                'data' => $positions
+            ]);
+        } catch (\Throwable $e) {
+            return json([
+                'code' => 500,
+                'msg' => '数据服务暂不可用',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
 // 控制器中直接使用Db门面+缓存
+
     public function checkUsername()
     {
         $username = input('username');
@@ -22,7 +55,7 @@ class User extends BaseController
             ->count();
 
         $data = $exists ? 1 : 0;
-        return show(config("status.success"),'正常返回用户名测试结果',$data);
+        return show(config("code.success"),'正常返回用户名测试结果',$data);
     }
 
     public function checkIdCardExists()
@@ -37,7 +70,7 @@ class User extends BaseController
         $count = Db::name('users')->where('id_card', $idCard)->count();
         // 如果记录数量大于 0，说明已存在，返回 1；否则返回 0
         $data = $count > 0 ? 1 : 0;
-        return show(config("status.success"),'正常返回身份证号码查重结果',$data);
+        return show(config("code.success"),'正常返回身份证号码查重结果',$data);
     }
 
     public function checkPhoneExists()
@@ -52,7 +85,7 @@ class User extends BaseController
         $count = Db::name('users')->where('phone', $phone)->count();
         // 如果记录数量大于 0，说明已存在，返回 1；否则返回 0
         $data = $count > 0 ? 1 : 0;
-        return show(config("status.success"),'正常返回手机号查重结果',$data);
+        return show(config("code.success"),'正常返回手机号查重结果',$data);
     }
     public function getDepartments()
     {
@@ -60,12 +93,12 @@ class User extends BaseController
             // 构建基础查询
             $query = Db::name('departments')
                 ->field('dept_id, dept_name') // 严格限制返回字段
-                ->order('dept_id ASC'); // 保持默认排序
+                ->order('sort_order ASC'); // 保持默认排序
 
             // 执行查询并处理结果
             $list = $query->select()->toArray();
 
-            return show(config("status.success"),'获取单位列表成功',$list);
+            return show(config("code.success"),'获取单位列表成功',$list);
 
         } catch (\Throwable $e) {
 
@@ -83,12 +116,12 @@ class User extends BaseController
             // 构建基础查询
             $query = Db::name('party_branches')
                 ->field('branch_id, branch_name') // 严格限制返回字段
-                ->order('branch_id ASC'); // 保持默认排序
+                ->order('sort_order ASC'); // 保持默认排序
 
             // 执行查询并处理结果
             $list = $query->select()->toArray();
 
-            return show(config("status.success"),'获取党支部成功',$list);
+            return show(config("code.success"),'获取党支部成功',$list);
 
         } catch (\Throwable $e) {
 
@@ -112,7 +145,7 @@ class User extends BaseController
             'real_name' => 'require|chs|length:2,10',
             'id_card' => 'require|length:18|unique:users,id_card',
             'dept_id' => 'require|integer',
-            'post' => 'require|length:3,30',
+            'post_id' => 'require|integer',
             'title' => 'require',
             'is_party_member' => 'require|boolean',
             'phone' => 'require|regex:/^1[3-9]\d{9}$/|unique:users,phone',
@@ -147,7 +180,7 @@ class User extends BaseController
             'is_party_member' => $data['is_party_member'] ? 1 : 0,
             'dept_id' => $data['dept_id'],
             'branch_id' => $data['is_party_member'] ? $data['party_branch'] : null,
-            'position' => $data['post'],
+            'post_id' => $data['post_id'],
             'title' => $data['title'],
             'wx_openid' => null
         ];
@@ -157,9 +190,9 @@ class User extends BaseController
             $userId = Db::name('users')->insertGetId($insertData);
 
             if ($userId) {
-                return show(config("status.success"),'注册成功',1);
+                return show(config("code.success"),'注册成功',1);
             } else {
-                return show(config("status.success"),'注册失败，请检查注册项',0);
+                return show(config("code.error"),'注册失败，请检查注册项',0);
             }
         } catch (\Exception $e) {
             return json(['code' => 0, 'message' => '未知错误，请稍后再试',-1]);

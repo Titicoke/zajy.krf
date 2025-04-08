@@ -123,4 +123,11 @@ export default {
       data: params
     })
   },
+  getPositions(params) {
+    return request({
+      url: '/service/getPositions',
+      method: 'post',
+      data: params
+    })
+  },
 }

@@ -116,17 +116,22 @@
           </el-select>
         </el-form-item>
         <!-- 岗位信息 -->
-        <el-form-item label="岗位名称" prop="post" :data-prop="'post'" class="required-star">
-          <el-input
-            v-model="form.post"
-            placeholder="请按格式输入：科室 - 岗位名称"
+        <el-form-item label="岗位类别" prop="post_id" :data-prop="'post_id'" class="required-star">
+          <el-select
+            v-model="form.post_id"
+            placeholder="请选择岗位类别"
+            filterable
             clearable
           >
-            <template #prefix>
-              <el-icon><Briefcase /></el-icon>
-            </template>
-          </el-input>
+            <el-option
+              v-for="position in positions"
+              :key="position.position_id"
+              :label="position.position_name"
+              :value="position.position_id"
+            />
+          </el-select>
         </el-form-item>
+
         <!-- 职称信息 -->
         <el-form-item label="职称" prop="title" :data-prop="'title'" class="required-star">
           <el-select
@@ -136,7 +141,7 @@
             clearable
           >
             <el-option
-              v-for="item in ['主任医师', '副主任医师', '主治医师', '住院医师']"
+              v-for="item in ['正高', '副高', '中级', '初级']"
               :key="item"
               :label="item"
               :value="item"
@@ -243,10 +248,10 @@ const form = reactive({
   password: '',
   real_name: '',
   id_card: '',
-  birthday: '无需手动改输入，根据身份证号码自动生成',
-  gender: '无需手动改输入，根据身份证号码自动生成',
+  birthday: '无需手动输入，根据身份证号码自动生成',
+  gender: '无需手动输入，根据身份证号码自动生成',
   dept_id: '',
-  post: '',
+  post_id: '',
   title: '',
   is_party_member: null,
   party_branch: '',
@@ -317,9 +322,8 @@ const rules = reactive({
   dept_id: [
     { required: true, message: '请选择所属科室', trigger: 'change' }
   ],
-  post: [
-    { required: true, message: '岗位名称是必填项，请输入', trigger: 'blur' },
-    { pattern: /^.{3,30}$/, message: '岗位名称长度应为3 - 30位字符' }
+  post_id: [
+    { required: true, message: '请选择岗位名称', trigger: 'change' }
   ],
   title: [
     { required: true, message: '请选择您的职称', trigger: 'change' }
@@ -388,7 +392,7 @@ const handleSmsCodeInput = async () => {
   if (form.smsCode.length === 6) {
     try {
       const res = await proxy.$api.checkSmsCode({ phone_number: form.phone, code: form.smsCode });
-      if (res[0] === 1) {
+      if (res.data.code === 1) {
         smsCodeCheckMessage.value = '✓  验证码验证通过';
         isSmsCodeValid.value = true;
         isSmsVerified.value = true;
@@ -426,16 +430,26 @@ const calculateGenderBirth = () => {
 
 // 组织数据
 const departments = ref([]);
+const positions = ref([]);
 const partyBranches = ref([]);
 
 onMounted(async () => {
-  try {
+   try {
     const res = await proxy.$api.getdepartments();
-    departments.value = res[0];
+    departments.value = res.data.data;
   } catch (e) {
     ElMessage.error('科室数据加载失败，请稍后重试');
   }
+
+  try {
+    const res = await proxy.$api.getPositions();
+    positions.value = res.data.data;
+  } catch (e) {
+    ElMessage.error('岗位数据加载失败，请稍后重试');
+  }
 });
+
+
 
 // 党支部加载
 const handlePartyChange = (isMember) => {
@@ -446,7 +460,7 @@ const loadPartyBranches = async () => {
   if (partyBranches.value.length > 0) return;
   try {
     const res = await proxy.$api.getpartyBranches();
-    partyBranches.value = res[0];
+    partyBranches.value = res.data.data;
   } catch (e) {
     ElMessage.error('党支部数据加载失败，请稍后重试');
   }
@@ -488,14 +502,14 @@ const submitForm = async () => {
     real_name: form.real_name,
     id_card: form.id_card,
     dept_id: form.dept_id,
-    post: form.post,
+    post_id: form.post_id,
     title: form.title,
     is_party_member: form.is_party_member,
     party_branch: form.party_branch,
     phone: form.phone,
     smsCode: form.smsCode
     });
-    if (res[0] === 1) {
+    if (res.data.code === 1) {
       // ElMessage.success('验证通过，正在为您注册...');
       // // 注册成功后可以跳转到登录页面或者其他页面
       // router.push('/login');
@@ -513,7 +527,7 @@ const submitForm = async () => {
           }
         });
     } else {
-      ElMessage.warning(res[1]);
+      ElMessage.warning(res.data.msg);
     }
   } catch (e) {
     ElMessage.warning('未知错误，请稍后再试');
@@ -579,7 +593,7 @@ const checkUsernameExists = async () => {
   }
   try {
     const res = await proxy.$api.checkUsername({ username: form.username });
-    if (res[0] === 1) {
+    if (res.data.data === 1) {
       usernameCheckMessage.value = '✖ 该用户名已被占用，请选择其他用户名。';
       isUsernameAvailable.value = false;
       focusErrorInput('username');
@@ -613,7 +627,7 @@ const checkIdCardExists = async () => {
   if (!idCard) return;
   try {
     const response = await proxy.$api.checkIdCardExists({ id_card: idCard });
-    if (response[0]===1) {
+    if (response.data.data===1) {
       isIdCardAvailable.value = false;
       idCardCheckMessage.value = '该身份证号已被注册，请更换';
     } 
@@ -632,7 +646,7 @@ const checkPhoneExists = async () => {
   if (!phone) return;
   try {
     const response = await proxy.$api.checkPhoneExists({ phone: phone });
-    if (response[0] === 1) {
+    if (response.data.data === 1) {
       isPhoneAvailable.value = false;
       phoneCheckMessage.value = '该手机号已被注册，请更换';
       smsDisabled.value = true; // 手机号已被注册，禁用获取验证码按钮
