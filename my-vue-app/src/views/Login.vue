@@ -84,9 +84,9 @@ const login = async () => {
 
       store.updateMenuList(res.data.data.menuList)     
       // 在这里执行添加路由方法，并传入router
-      store.addMenu(router) 
+      await store.addMenu(router) 
       store.state.token = res.data.data.token  
-      store.state.userInfo = res.data.data.userInfo 
+      store.state.userInfo = res.data.data.userInfo
       router.push("/home")
     } else {      
       refreshCaptcha();

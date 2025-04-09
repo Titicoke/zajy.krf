@@ -1,7 +1,6 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import config from "@/config"
-import { da } from "element-plus/es/locales.mjs";
 
 const service = axios.create();
 //const NETWORK_ERROR = "网络错误……";

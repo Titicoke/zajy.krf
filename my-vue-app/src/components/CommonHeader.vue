@@ -37,7 +37,7 @@
     </div>
 </template>
 <script setup>
-import { ref,computed } from 'vue'
+import { computed } from 'vue'
 import { useAllDataStore } from '@/stores/index.js'
 import {useRouter} from 'vue-router'
 // 定义 current 属性
@@ -54,7 +54,7 @@ const getImageUrl = (user)=>{
  const router=useRouter()
  const handleLoginOut=()=>{
   //执行重置方法
-  store.clearn()    
+  store.clearn(router)    
   router.push("/login")
 }
 const handleUsercenter=()=>{

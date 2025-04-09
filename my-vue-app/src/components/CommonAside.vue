@@ -83,6 +83,8 @@ const handleMenu = (item) => {
   router.push(item.path) 
   store.selectMenu(item) 
 }
+
+console.log('所有可用路由信息：', router.options.routes);
 </script>
 <style lang="less" scoped>
 /* 基础布局样式 */

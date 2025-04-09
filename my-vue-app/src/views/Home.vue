@@ -1,19 +1,17 @@
 <template>
-
-  <el-row class="home" :gutter="20">
+  <el-row class="home" :gutter="24">
     <el-col :span="8" style="margin-top: 20px; height: 80vh; overflow-y: auto;">    
-
       <el-card shadow="hover">
         <div class="user">
           <img :src="getImageUrl('user')"  class="user" />
           <div class="user-info">
             <p class="user-info-admin">Admin</p>
-            <p>超级管理员</p>
+            <p>管理员</p>
           </div>
         </div>
         <div class="login-info">
-          <p>上次登录时间:<span>2022-7-11</span></p>
-          <p>上次登录地点:<span>北京</span></p>
+          <p>上次登录时间:<span>2025-4-8</span></p>
+          <p>上次登录地点:<span>晋城</span></p>
         </div>
       </el-card>
         
@@ -28,14 +26,12 @@
           </el-table-column>
         </el-table>          
       </el-card>
-
     </el-col>
 
     <el-col :span="16" style="margin-top: 20px; height: 80vh; overflow-y: auto;">   
       <div class="num">
         <el-card
           :body-style="{display:'flex',padding:0}"
-          I
           v-for="item in countData"
           :key="item.name"
           >
@@ -48,64 +44,27 @@
       </div>
       
       <el-card class="top-echart">
-        <div ref="echart" style="height: 280px;"></div>
+        <div ref="userEchart" style="height: 350px;"></div>
       </el-card>
-
-      <div class="graph">
-        <el-card>
-          <div ref="userEchart" style="height: 240px;"></div>
-        </el-card>
-        <el-card>
-          <div ref="videoEchart" style="height: 240px;"></div>
-        </el-card>
-      </div>
-
-
     </el-col>
-   
-      
   </el-row>
 </template>
+
 <script setup>
-import { ref,getCurrentInstance,onMounted,reactive } from 'vue'
+import { ref, getCurrentInstance, onMounted, reactive } from 'vue'
 import * as echarts from 'echarts'
-
-
-//deepseek给的一种方法
-// const instance = getCurrentInstance(); // 获取实例
-// const getTableData = async () => {
-//   try {
-//     const data = await instance.proxy.$api.getTableData(); // 动态访问 proxy
-//     console.log(data);
-//     tableData.value = data.tableData; // 更新表格数据
-//   } catch (error) {
-//     console.error('获取表格数据失败:', error);
-//   }
-// };
-/**
- *未封装的axios请求*/
-//  axios ({
-//         url:'/api/home/getTableData',
-//         method:'get'
-//       }).then (res=>{
-//         if(res.data.code===200)
-//         console.log(res.data.data.tableData)
-//         tableData.value = res.data.data.tableData
-//       })
 
 const tableData = ref([])
 const countData = ref([])
-const chartData = ref([])
 const observer = ref(null)
 const tableLabel = ref({
-    name: "课程",
-    todayBuy: "今日购买",
-    monthBuy: "本月购买",
-    totalBuy: "总购买",
+    name: "活动名称",
+    todayBuy: "发布岗位数",
+    monthBuy: "已报名人数",
+    totalBuy: "活动时间",
 })
 
-
-//这个是折线图和柱状图 两个图表共用的公共配置
+// 柱状图的公共配置
 const xOptions = reactive({
       // 图例文字颜色
       textStyle: {
@@ -113,7 +72,9 @@ const xOptions = reactive({
       },
       legend: {},
       grid: {
-        left: "20%",
+        left: "5%",
+        right: "3%",
+        bottom:"50%",
       },
       // 提示框
       tooltip: {
@@ -130,6 +91,9 @@ const xOptions = reactive({
         axisLabel: {
           interval: 0,
           color: "#333",
+          formatter: function (value) {            
+            return value.split('').join('\n');
+          }
         },
       },
       yAxis: [
@@ -145,113 +109,64 @@ const xOptions = reactive({
       color: ["#2ec7c9", "#b6a2de", "#5ab1ef", "#ffb980", "#d87a80", "#8d98b3"],
       series: [],
 })
-//饼状图的配置
-const pieOptions = reactive({
-  tooltip: {
-    trigger: "item",
-  },
-  legend: {},
-  color: [
-    "#0f78f4",
-    "#dd536b",
-    "#9462e5",
-    "#a6a6a6",
-    "#e1bb22",
-    "#39c362",
-    "#3ed1cf",
-  ],
-  series: []
-})
 
-const {proxy}=getCurrentInstance()
+const { proxy } = getCurrentInstance()
 
-const getTableData=async()=>{
-  const data=await proxy.$api.getTableData()
-  //console.log(data)
-  tableData.value = data.tableData
+const getTableData = async () => {
+  let res = await proxy.$api.getTableData()
+  tableData.value = res.data.data.tableData
 }
 
-const getCountData=async()=>{
-  const data=await proxy.$api.getCountData()
-  //console.log(data)
-  countData.value = data
+const getCountData = async () => {
+  let res = await proxy.$api.getCountData()
+  countData.value = res.data.data
 }
 
-const getChartData=async()=>{
-  const {orderData,userData,videoData}=await proxy.$api.getChartData()
+const getChartData = async () => {
+  let res = await proxy.$api.getChartData()
+  const { userData } = res.data.data
 
-  //对第一个图标进行 x 轴 和 series 赋值
-  xOptions.xAxis.data = orderData.date;
-  xOptions.series = Object.keys (orderData.data [0]).map (val=>({
-      name:val,
-      data:orderData.data.map (item =>item [val]),
-      type:'line'
-  }))
-
-  const oneEchart=echarts.init(proxy.$refs['echart'])
-  oneEchart.setOption(xOptions)
-  //对第二个表格进行渲染
-
-  xOptions.xAxis.data=userData.map(item=>item.date)
-  xOptions.series=[
+  // 对柱状图进行渲染
+  xOptions.xAxis.data = userData.map(item => item.date)
+  xOptions.series = [
     {
-      name:"新增用户",
-      data:userData.map(item=>item.new),
-      type:'bar'
+      name: "已注册用户",
+      data: userData.map(item => item.new),
+      type: 'bar'
     },
     {
-      name:"活跃用户",
-      data:userData.map(item=>item.active),
-      type:'bar'
+      name: "应注册用户",
+      data: userData.map(item => item.active),
+      type: 'bar'
     },
   ]
 
-  const twoEchart=echarts.init(proxy.$refs['userEchart'])
+  const twoEchart = echarts.init(proxy.$refs['userEchart'])
   twoEchart.setOption(xOptions)
 
-  //对饼状图进行渲染
-
-  pieOptions.series=[
-    {
-      data:videoData,
-      type:'pie'
-    }
-  ]
-  const threeEchart=echarts.init(proxy.$refs['videoEchart'])
-  threeEchart.setOption(pieOptions)
-
-  //监听页面的变化
-  observer.value=new ResizeObserver((en)=>{
-    oneEchart.resize()
+  // 监听页面的变化
+  observer.value = new ResizeObserver((en) => {
     twoEchart.resize()
-    threeEchart.resize()
   })
 
-  //检测容器是否存在
-  if(proxy.$refs['echart']){
-      observer.value.observe(proxy.$refs['echart'])
+  // 检测容器是否存在
+  if (proxy.$refs['userEchart']) {
+      observer.value.observe(proxy.$refs['userEchart'])
   }
 }
-  
 
 onMounted(() => {
-  getTableData();
-  getCountData();
-  getChartData();
-});
+  getTableData()
+  getCountData()
+  getChartData()
+})
 
-const getImageUrl = (user)=>{
-    return new URL(`../assets/images/${user}.png`,import.meta.url).href
+const getImageUrl = (user) => {
+    return new URL(`../assets/images/${user}.png`, import.meta.url).href
 }
-
-
-
-
-
 </script>
 
 <style lang="less" scoped >
-
 .home {
     height: 100%;
     overflow: hidden;
@@ -314,17 +229,7 @@ const getImageUrl = (user)=>{
     }
   }
   .top-echart{
-    height: 280px
-  }
-  .graph {
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    .el-card {
-      width: 48%;
-      height: 260px;
-    }
+    height: 350px
   }
 }
-
-</style>
+</style>    

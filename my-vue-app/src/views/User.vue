@@ -133,9 +133,9 @@ const onSubmit = () => {
 const {proxy}=getCurrentInstance()
 
 const getUserData=async(config)=>{
-  let data=await proxy.$api.getUserData(config)
+  let res=await proxy.$api.getUserData(config)
   //console.log(data)
-  tableData.value=data.list.map(item=>({
+  tableData.value=res.data.data.list.map(item=>({
     ...item,
     sexLabel : item.sex === 1 ?'男':'女'
   }))

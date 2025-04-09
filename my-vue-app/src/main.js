@@ -18,7 +18,7 @@ import {useAllDataStore} from "@/stores"
 
 router.beforeEach((to, from) => {
     //如果要跳转的不是login,且token不存在(可以通过不存在token判断出用户未登录)
-   if(to.path !== '/reg1'&&to.path !== '/reg'&&to.path !== '/login'&&!store.state.token){
+   if(to.path !== '/admin/add'&&to.path !== '/reg'&&to.path !== '/login'&&!store.state.token){
        //跳转到login
        return { name: 'login' }
    }
