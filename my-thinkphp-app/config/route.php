@@ -31,7 +31,7 @@ return [
     // 默认模块名（开启自动多模块有效）
     'default_module'        => 'vol',
     // 默认控制器名
-    'default_controller'    => 'Index',
+    'default_controller'    => 'Test',
     // 默认操作名
     'default_action'        => 'vol',
     // 操作方法后缀
