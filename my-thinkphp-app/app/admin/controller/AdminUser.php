@@ -9,7 +9,7 @@ class AdminUser
     public function getUserlist()
     {
         try {
-            // 获取分页参数，默认页码为1，每页显示10条记录
+            // 获取分页参数，默认页码为1，每页显示10条记录。
             $page = Request::param('page', 1, 'intval');
             $limit = Request::param('limit', 10, 'intval');
 
